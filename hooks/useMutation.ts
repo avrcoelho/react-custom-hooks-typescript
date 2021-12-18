@@ -4,16 +4,16 @@ type MutationFunction<TData, TVariables> = (
   variables: TVariables
 ) => Promise<TData | undefined>;
 
-type UseMumationResponse<Data, MFunction> = {
+type UseMumationResponse<TFunction> = {
   isError: boolean;
   isSuccess: boolean;
   isLoading: boolean;
-  mutate: MFunction;
+  mutate: TFunction;
 };
 
-export const useMumation = <Data = unknown, Variables = unknown>(
-  effect: MutationFunction<Data, Variables>
-): UseMumationResponse<Data, MutationFunction<Data, Variables>> => {
+export const useMumation = <TData = unknown, TVariables = unknown>(
+  effect: MutationFunction<TData, TVariables>
+): UseMumationResponse<MutationFunction<TData, TVariables>> => {
   const handler = useRef(effect);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -24,8 +24,8 @@ export const useMumation = <Data = unknown, Variables = unknown>(
   });
 
   const executeMutation = async (
-    variables: Variables
-  ): Promise<Data | undefined> => {
+    variables: TVariables
+  ): Promise<TData | undefined> => {
     try {
       setIsSuccess(false);
       setIsError(false);
@@ -50,7 +50,7 @@ export const useMumation = <Data = unknown, Variables = unknown>(
   };
 };
 
-const test = (t: string) => Promise.resolve(t);
+const test = (t: string) => Promise.resolve(Number(t));
 
 const { mutate } = useMumation(test);
 
