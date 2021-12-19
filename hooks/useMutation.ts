@@ -49,9 +49,3 @@ export const useMumation = <TData = unknown, TVariables = unknown>(
     mutate: executeMutationRef.current,
   };
 };
-
-const test = (t: string) => Promise.resolve(Number(t));
-
-const { mutate } = useMumation(test);
-
-mutate("1");
