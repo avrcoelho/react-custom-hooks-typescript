@@ -9,3 +9,5 @@
 - usePreviousValue
 - useRecordState
 - useToggle
+- useQuery
+- useMutation
