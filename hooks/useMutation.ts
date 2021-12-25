@@ -12,15 +12,15 @@ type UseMumationResponse<TFunction> = {
 };
 
 export const useMumation = <TData = unknown, TVariables = unknown>(
-  effect: MutationFunction<TData, TVariables>
+  fn: MutationFunction<TData, TVariables>
 ): UseMumationResponse<MutationFunction<TData, TVariables>> => {
-  const handler = useRef(effect);
+  const handler = useRef(fn);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
 
   useLayoutEffect(() => {
-    handler.current = effect;
+    handler.current = fn;
   });
 
   const executeMutation = async (
