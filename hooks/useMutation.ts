@@ -4,16 +4,16 @@ type MutationFunction<TData, TVariables> = (
   variables?: TVariables
 ) => Promise<TData | undefined>;
 
-type UseMumationResponse<TFunction> = {
+type UseMutationResponse<TFunction> = {
   isError: boolean;
   isSuccess: boolean;
   isLoading: boolean;
   mutate: TFunction;
 };
 
-export const useMumation = <TData = unknown, TVariables = unknown>(
+export const useMutation = <TData = unknown, TVariables = unknown>(
   fn: MutationFunction<TData, TVariables>
-): UseMumationResponse<MutationFunction<TData, TVariables>> => {
+): UseMutationResponse<MutationFunction<TData, TVariables>> => {
   const handler = useRef(fn);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);

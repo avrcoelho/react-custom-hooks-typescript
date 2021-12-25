@@ -1,11 +1,11 @@
 import { renderHook, act } from "@testing-library/react-hooks";
 
-import { useMumation } from "../useMutation";
+import { useMutation } from "../useMutation";
 
 describe("useMutation hook", () => {
   it("should be able to return success on request", async () => {
     const { result, waitForNextUpdate } = renderHook(() =>
-      useMumation(() => Promise.resolve(true))
+      useMutation(() => Promise.resolve(true))
     );
 
     act(() => {
@@ -18,7 +18,7 @@ describe("useMutation hook", () => {
 
   it("should be able to return error on request", async () => {
     const { result, waitForNextUpdate } = renderHook(() =>
-      useMumation(() => Promise.reject(true))
+      useMutation(() => Promise.reject(true))
     );
 
     act(() => {
