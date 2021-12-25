@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 
 type MutationFunction<TData, TVariables> = (
-  variables: TVariables
+  variables?: TVariables
 ) => Promise<TData | undefined>;
 
 type UseMumationResponse<TFunction> = {
@@ -24,7 +24,7 @@ export const useMumation = <TData = unknown, TVariables = unknown>(
   });
 
   const executeMutation = async (
-    variables: TVariables
+    variables?: TVariables
   ): Promise<TData | undefined> => {
     try {
       setIsSuccess(false);
