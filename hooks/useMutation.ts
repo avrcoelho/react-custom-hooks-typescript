@@ -1,7 +1,7 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 
 type MutationFunction<TData, TVariables> = (
-  variables?: TVariables
+  variables: TVariables
 ) => Promise<TData | undefined>;
 
 type UseMutationResponse<TFunction> = {
@@ -11,7 +11,7 @@ type UseMutationResponse<TFunction> = {
   mutate: TFunction;
 };
 
-export const useMutation = <TData = unknown, TVariables = unknown>(
+export const useMutation = <TData = unknown, TVariables = void>(
   fn: MutationFunction<TData, TVariables>
 ): UseMutationResponse<MutationFunction<TData, TVariables>> => {
   const handler = useRef(fn);
@@ -23,29 +23,28 @@ export const useMutation = <TData = unknown, TVariables = unknown>(
     handler.current = fn;
   });
 
-  const executeMutation = async (
-    variables?: TVariables
-  ): Promise<TData | undefined> => {
-    try {
-      setIsSuccess(false);
-      setIsError(false);
-      setIsLoading(true);
-      const reponseData = await handler.current(variables);
-      setIsSuccess(true);
-      return reponseData;
-    } catch {
-      setIsError(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const executeMutationRef = useRef(executeMutation);
+  const mutate = useCallback(
+    async (variables: TVariables): Promise<TData | undefined> => {
+      try {
+        setIsSuccess(false);
+        setIsError(false);
+        setIsLoading(true);
+        const reponseData = await handler.current(variables);
+        setIsSuccess(true);
+        return reponseData;
+      } catch {
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  );
 
   return {
     isLoading,
     isError,
     isSuccess,
-    mutate: executeMutationRef.current,
+    mutate,
   };
 };
