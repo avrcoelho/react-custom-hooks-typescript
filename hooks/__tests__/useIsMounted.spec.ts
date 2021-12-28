@@ -6,7 +6,8 @@ jest.useFakeTimers();
 
 describe("useIsMounted hook", () => {
   it("should be able to return mounted value", async () => {
-    const { result } = renderHook(useIsMounted);
+    const { result, rerender } = renderHook(useIsMounted);
+    rerender();
 
     expect(result.current).toBeTruthy();
   });
