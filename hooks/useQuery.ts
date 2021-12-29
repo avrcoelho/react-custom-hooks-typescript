@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useReducer, useRef } from "react";
 
 type UseQueryOptions = {
   manualFetch?: boolean;
@@ -12,15 +12,39 @@ type UseQueryResponse<Data> = {
   refetch(): void;
 };
 
+type ReducerAction = {
+  type: string;
+  data?: unknown;
+};
+
+const INITIAL_STATE = {
+  isLoading: false,
+  isSuccess: false,
+  isError: false,
+  data: undefined,
+};
+
+const reducer = (state: typeof INITIAL_STATE, action: ReducerAction) => {
+  switch (action.type) {
+    case "loading":
+      return { ...state, isLoading: true, isSuccess: false, isError: false };
+    case "success":
+      return { ...state, isSuccess: true, data: action.data };
+    case "error":
+      return { ...state, isError: true };
+    case "finally":
+      return { ...state, isLoading: false };
+    default:
+      return state;
+  }
+};
+
 export const useQuery = <Data = unknown>(
   effect: () => Promise<Data>,
   options?: UseQueryOptions
 ): UseQueryResponse<Data> => {
   const handler = useRef(effect);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [data, setData] = useState<Data>();
+  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
   useLayoutEffect(() => {
     handler.current = effect;
@@ -28,16 +52,13 @@ export const useQuery = <Data = unknown>(
 
   const executeQuery = async (): Promise<void> => {
     try {
-      setIsSuccess(false);
-      setIsError(false);
-      setIsLoading(true);
+      dispatch({ type: "loading" });
       const reponseData = await handler.current();
-      setData(reponseData as Data | undefined);
-      setIsSuccess(true);
+      dispatch({ type: "success", data: reponseData });
     } catch {
-      setIsError(true);
+      dispatch({ type: "error" });
     } finally {
-      setIsLoading(false);
+      dispatch({ type: "finally" });
     }
   };
 
@@ -49,10 +70,10 @@ export const useQuery = <Data = unknown>(
   }, [options]);
 
   return {
-    isLoading,
-    isError,
-    isSuccess,
-    data,
+    isLoading: state.isLoading,
+    isError: state.isError,
+    isSuccess: state.isSuccess,
+    data: state.data as Data | undefined,
     refetch: executeQueryRef.current,
   };
 };
