@@ -1,4 +1,4 @@
-import { useLayoutEffect, useReducer, useRef } from "react";
+import { useCallback, useLayoutEffect, useReducer, useRef } from "react";
 
 type MutationFunction<TData, TVariables> = (
   variables: TVariables
@@ -47,25 +47,26 @@ export const useMutation = <TData = unknown, TVariables = void>(
     handler.current = fn;
   });
 
-  const mutate = async (variables: TVariables): Promise<TData | undefined> => {
-    try {
-      dispatch({ type: "loading" });
-      const reponseData = await handler.current(variables);
-      dispatch({ type: "success", data: reponseData });
-      return reponseData;
-    } catch {
-      dispatch({ type: "error" });
-    } finally {
-      dispatch({ type: "finally" });
-    }
-  };
-
-  const mutateRef = useRef(mutate);
+  const mutate = useCallback(
+    async (variables: TVariables): Promise<TData | undefined> => {
+      try {
+        dispatch({ type: "loading" });
+        const reponseData = await handler.current(variables);
+        dispatch({ type: "success", data: reponseData });
+        return reponseData;
+      } catch {
+        dispatch({ type: "error" });
+      } finally {
+        dispatch({ type: "finally" });
+      }
+    },
+    []
+  );
 
   return {
     isLoading: state.isLoading,
     isError: state.isError,
     isSuccess: state.isSuccess,
-    mutate: mutateRef.current,
+    mutate,
   };
 };

@@ -1,4 +1,10 @@
-import { useEffect, useLayoutEffect, useReducer, useRef } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useReducer,
+  useRef,
+} from "react";
 
 type UseQueryOptions = {
   manualFetch?: boolean;
@@ -50,7 +56,7 @@ export const useQuery = <Data = unknown>(
     handler.current = effect;
   });
 
-  const executeQuery = async (): Promise<void> => {
+  const executeQuery = useCallback(async (): Promise<void> => {
     try {
       dispatch({ type: "loading" });
       const reponseData = await handler.current();
@@ -60,20 +66,19 @@ export const useQuery = <Data = unknown>(
     } finally {
       dispatch({ type: "finally" });
     }
-  };
+  }, []);
 
-  const executeQueryRef = useRef(executeQuery);
   useEffect(() => {
     if (!options?.manualFetch) {
-      executeQueryRef.current();
+      executeQuery();
     }
-  }, [options]);
+  }, [options, executeQuery]);
 
   return {
     isLoading: state.isLoading,
     isError: state.isError,
     isSuccess: state.isSuccess,
     data: state.data as Data | undefined,
-    refetch: executeQueryRef.current,
+    refetch: executeQuery,
   };
 };
