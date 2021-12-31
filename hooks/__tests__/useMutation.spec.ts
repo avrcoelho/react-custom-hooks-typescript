@@ -1,11 +1,11 @@
-import { renderHook, act } from "@testing-library/react-hooks";
+import { renderHook, act } from '@testing-library/react-hooks';
 
-import { useMutation } from "../useMutation";
+import { useMutation } from '../useMutation';
 
-describe("useMutation hook", () => {
-  it("should be able to return success on request", async () => {
+describe('useMutation hook', () => {
+  it('should be able to return success on request', async () => {
     const { result, waitForNextUpdate } = renderHook(() =>
-      useMutation(() => Promise.resolve(true))
+      useMutation(() => Promise.resolve(true)),
     );
 
     act(() => {
@@ -16,9 +16,9 @@ describe("useMutation hook", () => {
     expect(result.current.isSuccess).toBeTruthy();
   });
 
-  it("should be able to return error on request", async () => {
+  it('should be able to return error on request', async () => {
     const { result, waitForNextUpdate } = renderHook(() =>
-      useMutation(() => Promise.reject(true))
+      useMutation(() => Promise.reject(true)),
     );
 
     act(() => {

@@ -4,7 +4,7 @@ import {
   useLayoutEffect,
   useReducer,
   useRef,
-} from "react";
+} from 'react';
 
 type UseQueryOptions = {
   manualFetch?: boolean;
@@ -32,22 +32,20 @@ const INITIAL_STATE = {
 
 const reducer = (state: typeof INITIAL_STATE, action: ReducerAction) => {
   switch (action.type) {
-    case "loading":
+    case 'loading':
       return { ...state, isLoading: true, isSuccess: false, isError: false };
-    case "success":
+    case 'success':
       return { ...state, isSuccess: true, data: action.data };
-    case "error":
+    case 'error':
       return { ...state, isError: true };
-    case "finally":
-      return { ...state, isLoading: false };
     default:
-      return state;
+      return { ...state, isLoading: false };
   }
 };
 
 export const useQuery = <Data = unknown>(
   effect: () => Promise<Data>,
-  options?: UseQueryOptions
+  options?: UseQueryOptions,
 ): UseQueryResponse<Data> => {
   const handler = useRef(effect);
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
@@ -58,13 +56,13 @@ export const useQuery = <Data = unknown>(
 
   const executeQuery = useCallback(async (): Promise<void> => {
     try {
-      dispatch({ type: "loading" });
+      dispatch({ type: 'loading' });
       const reponseData = await handler.current();
-      dispatch({ type: "success", data: reponseData });
+      dispatch({ type: 'success', data: reponseData });
     } catch {
-      dispatch({ type: "error" });
+      dispatch({ type: 'error' });
     } finally {
-      dispatch({ type: "finally" });
+      dispatch({ type: 'finally' });
     }
   }, []);
 

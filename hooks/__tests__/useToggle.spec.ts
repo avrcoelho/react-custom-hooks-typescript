@@ -1,9 +1,9 @@
-import { renderHook, act } from "@testing-library/react-hooks";
+import { renderHook, act } from '@testing-library/react-hooks';
 
-import { useToggle } from "../useToggle";
+import { useToggle } from '../useToggle';
 
-describe("useToggle hook", () => {
-  it("should be able to toggle value to true", () => {
+describe('useToggle hook', () => {
+  it('should be able to toggle value to true', () => {
     const { result } = renderHook(() => useToggle(false));
 
     act(() => {
@@ -13,7 +13,7 @@ describe("useToggle hook", () => {
     expect(result.current[0]).toBeTruthy();
   });
 
-  it("should be able to toggle value to false", () => {
+  it('should be able to toggle value to false', () => {
     const { result } = renderHook(() => useToggle(false));
 
     act(() => {

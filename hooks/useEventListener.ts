@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from 'react';
 
 type UseEventListenerOptions = {
   enabled?: boolean;
@@ -6,11 +6,11 @@ type UseEventListenerOptions = {
 };
 
 type UseEventListenerHook = <
-  EventType extends keyof GlobalEventHandlersEventMap
+  EventType extends keyof GlobalEventHandlersEventMap,
 >(
   eventType: EventType,
   handler: (e: GlobalEventHandlersEventMap[EventType]) => void,
-  options?: UseEventListenerOptions
+  options?: UseEventListenerOptions,
 ) => void;
 
 const DEFAULT_OPTIONS: UseEventListenerOptions = {
@@ -21,7 +21,7 @@ const DEFAULT_OPTIONS: UseEventListenerOptions = {
 export const useEventListener: UseEventListenerHook = (
   eventType,
   handler,
-  options = DEFAULT_OPTIONS
+  options = DEFAULT_OPTIONS,
 ) => {
   const { enabled = true, target = document } = options;
   const handlerRef = useRef(handler);
@@ -35,7 +35,7 @@ export const useEventListener: UseEventListenerHook = (
       return () => null;
     }
 
-    const eventHandler: typeof handlerRef.current = (e) => {
+    const eventHandler: typeof handlerRef.current = e => {
       handlerRef.current.call(target, e);
     };
 

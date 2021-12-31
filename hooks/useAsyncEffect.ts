@@ -4,7 +4,7 @@ import {
   useEffect,
   useLayoutEffect,
   useRef,
-} from "react";
+} from 'react';
 
 type Destructor = ReturnType<EffectCallback>;
 
@@ -12,7 +12,7 @@ type UseAsyncEffectHook = {
   (
     effect: () => Promise<void>,
     destructor?: Destructor,
-    deps?: DependencyList
+    deps?: DependencyList,
   ): void;
   (effect: () => Promise<void>, deps?: DependencyList): void;
 };
@@ -20,9 +20,9 @@ type UseAsyncEffectHook = {
 export const useAsyncEffect: UseAsyncEffectHook = (
   effect: () => Promise<void>,
   destructor?: Destructor | DependencyList,
-  deps?: DependencyList
+  deps?: DependencyList,
 ) => {
-  const willDestroy = typeof destructor === "function";
+  const willDestroy = typeof destructor === 'function';
   const dependencyList = willDestroy ? deps : (destructor as DependencyList);
   const handler = useRef(effect);
 

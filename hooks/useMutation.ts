@@ -1,7 +1,7 @@
-import { useCallback, useLayoutEffect, useReducer, useRef } from "react";
+import { useCallback, useLayoutEffect, useReducer, useRef } from 'react';
 
 type MutationFunction<TData, TVariables> = (
-  variables: TVariables
+  variables: TVariables,
 ) => Promise<TData | undefined>;
 
 type UseMutationResponse<TFunction> = {
@@ -24,26 +24,24 @@ const INITIAL_STATE = {
 
 const reducer = (state: typeof INITIAL_STATE, action: ReducerAction) => {
   switch (action.type) {
-    case "loading":
+    case 'loading':
       return {
         ...state,
         isLoading: true,
         isSuccess: false,
         isError: false,
       };
-    case "success":
+    case 'success':
       return { ...state, isSuccess: true };
-    case "error":
+    case 'error':
       return { ...state, isError: true };
-    case "finally":
-      return { ...state, isLoading: false };
     default:
-      return state;
+      return { ...state, isLoading: false };
   }
 };
 
 export const useMutation = <TData = unknown, TVariables = void>(
-  fn: MutationFunction<TData, TVariables>
+  fn: MutationFunction<TData, TVariables>,
 ): UseMutationResponse<MutationFunction<TData, TVariables>> => {
   const handler = useRef(fn);
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
@@ -56,17 +54,17 @@ export const useMutation = <TData = unknown, TVariables = void>(
     async (variables: TVariables): Promise<TData | undefined> => {
       let responseData: TData | undefined;
       try {
-        dispatch({ type: "loading" });
+        dispatch({ type: 'loading' });
         responseData = await handler.current(variables);
-        dispatch({ type: "success" });
+        dispatch({ type: 'success' });
       } catch {
-        dispatch({ type: "error" });
+        dispatch({ type: 'error' });
       } finally {
-        dispatch({ type: "finally" });
+        dispatch({ type: 'finally' });
       }
       return responseData;
     },
-    []
+    [],
   );
 
   return {

@@ -1,14 +1,14 @@
-import { useReducer } from "react";
+import { useReducer } from 'react';
 
 type AnyObject = Record<string, unknown>;
 
 type StateAction<S> =
   | Partial<Record<keyof S, S[keyof S]>>
-  | import("react").ReducerWithoutAction<S>;
+  | import('react').ReducerWithoutAction<S>;
 
 export const useRecordState = <T extends AnyObject>(initialState: T) =>
   useReducer((prevState: T, action: StateAction<T>) => {
-    if (typeof action === "function") {
+    if (typeof action === 'function') {
       return {
         ...prevState,
         ...action(prevState),
@@ -16,7 +16,7 @@ export const useRecordState = <T extends AnyObject>(initialState: T) =>
     }
 
     const hasUpdate = Object.entries(action).some(
-      ([key, value]) => prevState[key] !== value
+      ([key, value]) => prevState[key] !== value,
     );
 
     return hasUpdate ? { ...prevState, ...action } : prevState;
