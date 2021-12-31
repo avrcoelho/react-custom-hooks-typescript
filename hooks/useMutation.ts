@@ -25,9 +25,14 @@ const INITIAL_STATE = {
 const reducer = (state: typeof INITIAL_STATE, action: ReducerAction) => {
   switch (action.type) {
     case "loading":
-      return { ...state, isLoading: true, isSuccess: false, isError: false };
+      return {
+        ...state,
+        isLoading: true,
+        isSuccess: false,
+        isError: false,
+      };
     case "success":
-      return { ...state, isSuccess: true, data: action.data };
+      return { ...state, isSuccess: true };
     case "error":
       return { ...state, isError: true };
     case "finally":
@@ -49,16 +54,17 @@ export const useMutation = <TData = unknown, TVariables = void>(
 
   const mutate = useCallback(
     async (variables: TVariables): Promise<TData | undefined> => {
+      let responseData: TData | undefined;
       try {
         dispatch({ type: "loading" });
-        const reponseData = await handler.current(variables);
-        dispatch({ type: "success", data: reponseData });
-        return reponseData;
+        responseData = await handler.current(variables);
+        dispatch({ type: "success" });
       } catch {
         dispatch({ type: "error" });
       } finally {
         dispatch({ type: "finally" });
       }
+      return responseData;
     },
     []
   );
