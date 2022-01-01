@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 
 type UseEventListenerOptions = {
-  enabled?: boolean;
+  disabled?: boolean;
   target?: any;
 };
 
@@ -14,16 +14,15 @@ type UseEventListenerHook = <
 ) => void;
 
 const DEFAULT_OPTIONS: UseEventListenerOptions = {
-  enabled: true,
+  disabled: false,
   target: document,
 };
 
 export const useEventListener: UseEventListenerHook = (
   eventType,
   handler,
-  options = DEFAULT_OPTIONS,
+  { disabled, target } = DEFAULT_OPTIONS,
 ) => {
-  const { enabled = true, target = document } = options;
   const handlerRef = useRef(handler);
 
   useLayoutEffect(() => {
@@ -31,7 +30,7 @@ export const useEventListener: UseEventListenerHook = (
   });
 
   useEffect(() => {
-    if (enabled) {
+    if (disabled) {
       return () => null;
     }
 
@@ -43,5 +42,5 @@ export const useEventListener: UseEventListenerHook = (
     return () => {
       target.removeEventListener(eventType, eventHandler);
     };
-  }, [eventType, target, enabled]);
+  }, [eventType, target, disabled]);
 };

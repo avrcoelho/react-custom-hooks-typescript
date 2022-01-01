@@ -1,8 +1,8 @@
 module.exports = {
   clearMocks: true,
   collectCoverage: true,
-  collectCoverageFrom: ["<rootDir>/hooks/*.ts"],
-  coverageDirectory: "coverage",
+  collectCoverageFrom: ['<rootDir>/hooks/*.ts'],
+  coverageDirectory: 'coverage',
   coverageThreshold: {
     global: {
       branches: 0,
@@ -11,7 +11,8 @@ module.exports = {
     },
   },
   transform: {
-    "^.+\\.ts$": "ts-jest",
+    '^.+\\.tsx?$': 'ts-jest',
   },
-  testMatch: ["<rootDir>/hooks/__tests__/*.spec.ts"],
+  testEnvironment: 'jsdom',
+  testMatch: ['<rootDir>/hooks/__tests__/*.spec.{ts,tsx}'],
 };
