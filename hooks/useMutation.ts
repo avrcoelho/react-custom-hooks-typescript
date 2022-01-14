@@ -41,13 +41,13 @@ const reducer = (state: typeof INITIAL_STATE, action: ReducerAction) => {
 };
 
 export const useMutation = <TData = unknown, TVariables = void>(
-  fn: MutationFunction<TData, TVariables>,
+  handler: MutationFunction<TData, TVariables>,
 ): UseMutationResponse<MutationFunction<TData, TVariables>> => {
-  const handler = useRef(fn);
+  const handlerRef = useRef(handler);
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
   useLayoutEffect(() => {
-    handler.current = fn;
+    handlerRef.current = handler;
   });
 
   const mutate = useCallback(
@@ -55,7 +55,7 @@ export const useMutation = <TData = unknown, TVariables = void>(
       let responseData: TData | undefined;
       try {
         dispatch({ type: 'loading' });
-        responseData = await handler.current(variables);
+        responseData = await handlerRef.current(variables);
         dispatch({ type: 'success' });
       } catch {
         dispatch({ type: 'error' });
