@@ -68,12 +68,12 @@ export const useQuery = <Data = unknown>(
 
   const isMount = useRef(true);
   useEffect(() => {
-    const canExecuteQuery = !options.manualFetch && isMount.current;
+    const canExecuteQuery = !options?.manualFetch && isMount.current;
     if (canExecuteQuery) {
       isMount.current = false;
       executeQuery();
     }
-  }, [options.manualFetch, executeQuery]);
+  }, [options?.manualFetch, executeQuery]);
 
   return {
     isLoading: state.isLoading,
