@@ -44,20 +44,20 @@ const reducer = (state: typeof INITIAL_STATE, action: ReducerAction) => {
 };
 
 export const useQuery = <Data = unknown>(
-  effect: () => Promise<Data>,
+  handler: () => Promise<Data>,
   options?: UseQueryOptions,
 ): UseQueryResponse<Data> => {
-  const handler = useRef(effect);
+  const handlerRef = useRef(handler);
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
   useLayoutEffect(() => {
-    handler.current = effect;
+    handlerRef.current = handler;
   });
 
   const executeQuery = useCallback(async (): Promise<void> => {
     try {
       dispatch({ type: 'loading' });
-      const reponseData = await handler.current();
+      const reponseData = await handlerRef.current();
       dispatch({ type: 'success', data: reponseData });
     } catch {
       dispatch({ type: 'error' });
