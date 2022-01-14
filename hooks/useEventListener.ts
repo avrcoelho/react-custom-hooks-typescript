@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef } from 'react';
 
 type UseEventListenerOptions = {
   disabled?: boolean;
-  target?: any;
+  target?: Document | Element;
 };
 
 type UseEventListenerHook = <
@@ -34,13 +34,13 @@ export const useEventListener: UseEventListenerHook = (
       return () => null;
     }
 
-    const eventHandler: typeof handlerRef.current = e => {
+    const eventHandler: EventListener = e => {
       handlerRef.current.call(target, e);
     };
 
-    target.addEventListener(eventType, eventHandler);
+    target?.addEventListener(eventType, eventHandler);
     return () => {
-      target.removeEventListener(eventType, eventHandler);
+      target?.removeEventListener(eventType, eventHandler);
     };
   }, [eventType, target, disabled]);
 };
