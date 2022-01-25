@@ -9,9 +9,9 @@ describe('useEventListener', () => {
   });
   it('should be able to call handler', () => {
     const Component = () => {
-      useEventListener('click', mockHandler);
+      const elementRef = useEventListener<HTMLDivElement>('click', mockHandler);
 
-      return <div>test</div>;
+      return <div ref={elementRef}>test</div>;
     };
     render(<Component />);
 
@@ -22,9 +22,13 @@ describe('useEventListener', () => {
 
   it('should not be able to call handler when is disabled', () => {
     const Component = () => {
-      useEventListener('click', mockHandler, { disabled: true });
+      const elementRef = useEventListener<HTMLDivElement>(
+        'click',
+        mockHandler,
+        { disabled: true },
+      );
 
-      return <div>test</div>;
+      return <div ref={elementRef}>test</div>;
     };
     render(<Component />);
 
@@ -35,11 +39,9 @@ describe('useEventListener', () => {
 
   it('should be able to call handler when click on custom element', () => {
     const Component = () => {
-      useEventListener('click', mockHandler, {
-        target: document,
-      });
+      const elementRef = useEventListener<HTMLDivElement>('click', mockHandler);
 
-      return <div>test</div>;
+      return <div ref={elementRef}>test</div>;
     };
     render(<Component />);
 

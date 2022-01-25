@@ -1,29 +1,25 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, MutableRefObject } from 'react';
 
 type UseEventListenerOptions = {
   disabled?: boolean;
-  target?: Document | Element;
 };
 
-type UseEventListenerHook = <
-  EventType extends keyof GlobalEventHandlersEventMap,
->(
-  eventType: EventType,
-  handler: (e: GlobalEventHandlersEventMap[EventType]) => void,
-  options?: UseEventListenerOptions,
-) => void;
+type EventType = keyof GlobalEventHandlersEventMap;
+
+type UseEventListenerHookResponse<ElementType> =
+  MutableRefObject<ElementType | null>;
 
 const DEFAULT_OPTIONS: UseEventListenerOptions = {
   disabled: false,
-  target: document,
 };
 
-export const useEventListener: UseEventListenerHook = (
-  eventType,
-  handler,
-  { disabled, target } = DEFAULT_OPTIONS,
-) => {
+export const useEventListener = <ElementType extends Element>(
+  eventType: EventType,
+  handler: (e: GlobalEventHandlersEventMap[EventType]) => void,
+  { disabled }: UseEventListenerOptions = DEFAULT_OPTIONS,
+): UseEventListenerHookResponse<ElementType> => {
   const handlerRef = useRef(handler);
+  const elementRef = useRef<ElementType>(null);
 
   useLayoutEffect(() => {
     handlerRef.current = handler;
@@ -35,12 +31,14 @@ export const useEventListener: UseEventListenerHook = (
     }
 
     const eventHandler: EventListener = e => {
-      handlerRef.current.call(target, e);
+      handlerRef.current.call(elementRef.current, e);
     };
 
-    target?.addEventListener(eventType, eventHandler);
+    elementRef.current?.addEventListener(eventType, eventHandler);
     return () => {
-      target?.removeEventListener(eventType, eventHandler);
+      elementRef.current?.removeEventListener(eventType, eventHandler);
     };
-  }, [eventType, target, disabled]);
+  }, [eventType, disabled]);
+
+  return elementRef;
 };
