@@ -3,7 +3,7 @@ import {
   useEffect,
   useLayoutEffect,
   useReducer,
-  useRef,
+  useRef
 } from 'react';
 
 type UseQueryOptions = {
@@ -23,11 +23,13 @@ type ReducerAction = {
   data?: unknown;
 };
 
+type QueryFuntion<Data = unknown> = () => Data | Promise<Data>;
+
 const INITIAL_STATE = {
   isLoading: false,
   isSuccess: false,
   isError: false,
-  data: undefined,
+  data: undefined
 };
 
 const reducer = (state: typeof INITIAL_STATE, action: ReducerAction) => {
@@ -43,9 +45,9 @@ const reducer = (state: typeof INITIAL_STATE, action: ReducerAction) => {
   }
 };
 
-export const useQuery = <Data = unknown>(
-  handler: () => Promise<Data>,
-  options?: UseQueryOptions,
+export const useQuery = <FnData = unknown, Data = FnData>(
+  handler: QueryFuntion<FnData>,
+  options?: UseQueryOptions
 ): UseQueryResponse<Data> => {
   const handlerRef = useRef(handler);
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
@@ -80,6 +82,6 @@ export const useQuery = <Data = unknown>(
     isError: state.isError,
     isSuccess: state.isSuccess,
     data: state.data as Data | undefined,
-    refetch: executeQuery,
+    refetch: executeQuery
   };
 };
