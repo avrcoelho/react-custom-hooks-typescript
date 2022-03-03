@@ -28,4 +28,20 @@ describe('useMutation hook', () => {
 
     expect(result.current.isError).toBeTruthy();
   });
+
+  it('should be able to reset state', async () => {
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useMutation(() => Promise.reject()),
+    );
+
+    act(() => {
+      result.current.mutate();
+    });
+    await waitForNextUpdate();
+    act(() => {
+      result.current.reset();
+    });
+
+    expect(result.current.isError).toBeFalsy();
+  });
 });

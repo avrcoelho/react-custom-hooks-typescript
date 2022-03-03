@@ -9,6 +9,7 @@ type UseMutationResponse<TFunction> = {
   isSuccess: boolean;
   isLoading: boolean;
   mutate: TFunction;
+  reset(): void;
 };
 
 type ReducerAction = {
@@ -22,7 +23,10 @@ const INITIAL_STATE = {
   isError: false,
 };
 
-const reducer = (state: typeof INITIAL_STATE, action: ReducerAction) => {
+const reducer = (
+  state: typeof INITIAL_STATE,
+  action: ReducerAction,
+): typeof INITIAL_STATE => {
   switch (action.type) {
     case 'loading':
       return {
@@ -35,6 +39,8 @@ const reducer = (state: typeof INITIAL_STATE, action: ReducerAction) => {
       return { ...state, isSuccess: true };
     case 'error':
       return { ...state, isError: true };
+    case 'reset':
+      return INITIAL_STATE;
     default:
       return { ...state, isLoading: false };
   }
@@ -67,10 +73,15 @@ export const useMutation = <TData = unknown, TVariables = void>(
     [],
   );
 
+  const reset = useCallback(() => {
+    dispatch({ type: 'reset' });
+  }, []);
+
   return {
     isLoading: state.isLoading,
     isError: state.isError,
     isSuccess: state.isSuccess,
     mutate,
+    reset,
   };
 };

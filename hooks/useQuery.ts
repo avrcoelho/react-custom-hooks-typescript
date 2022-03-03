@@ -3,7 +3,7 @@ import {
   useEffect,
   useLayoutEffect,
   useReducer,
-  useRef
+  useRef,
 } from 'react';
 
 type UseQueryOptions = {
@@ -29,10 +29,13 @@ const INITIAL_STATE = {
   isLoading: false,
   isSuccess: false,
   isError: false,
-  data: undefined
+  data: undefined as any,
 };
 
-const reducer = (state: typeof INITIAL_STATE, action: ReducerAction) => {
+const reducer = (
+  state: typeof INITIAL_STATE,
+  action: ReducerAction,
+): typeof INITIAL_STATE => {
   switch (action.type) {
     case 'loading':
       return { ...state, isLoading: true, isSuccess: false, isError: false };
@@ -47,7 +50,7 @@ const reducer = (state: typeof INITIAL_STATE, action: ReducerAction) => {
 
 export const useQuery = <FnData = unknown, Data = FnData>(
   handler: QueryFuntion<FnData>,
-  options?: UseQueryOptions
+  options?: UseQueryOptions,
 ): UseQueryResponse<Data> => {
   const handlerRef = useRef(handler);
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
@@ -82,6 +85,6 @@ export const useQuery = <FnData = unknown, Data = FnData>(
     isError: state.isError,
     isSuccess: state.isSuccess,
     data: state.data as Data | undefined,
-    refetch: executeQuery
+    refetch: executeQuery,
   };
 };
