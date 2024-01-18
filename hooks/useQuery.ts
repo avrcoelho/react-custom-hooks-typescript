@@ -7,7 +7,6 @@ import {
 } from 'react';
 
 type UseQueryOptions<Data> = {
-  queryFn: QueryFuntion<Data>;
   manualFetch?: boolean;
   onSuccess?(data: Data | undefined): void;
   onError?(error: unknown): void;
