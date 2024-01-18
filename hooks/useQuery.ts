@@ -64,9 +64,9 @@ export const useQuery = <Data = unknown>(
   const executeQuery = useCallback(async (): Promise<void> => {
     try {
       dispatch({ type: 'loading' });
-      const reponseData = await handlerRef.current();
-      dispatch({ type: 'success', data: reponseData });
-      options?.onSuccess?.(reponseData);
+      const responseData = await handlerRef.current();
+      dispatch({ type: 'success', data: responseData });
+      options?.onSuccess?.(responseData);
     } catch (error) {
       dispatch({ type: 'error' });
       options?.onError?.(error);
