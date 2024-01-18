@@ -8,8 +8,8 @@ import {
 
 type UseQueryOptions<Data> = {
   manualFetch?: boolean;
-  onSuccess?(data: Data | undefined): void;
-  onError?(error: unknown): void;
+  onSuccess?: (data: Data | undefined) => void;
+  onError?: (error: unknown) => void;
 };
 
 type UseQueryResponse<Data> = {
@@ -52,7 +52,7 @@ const reducer = (
 
 export const useQuery = <Data = unknown>(
   handler: QueryFuntion<Data>,
-  options: UseQueryOptions<Data>,
+  options?: UseQueryOptions<Data>,
 ): UseQueryResponse<Data> => {
   const handlerRef = useRef(handler);
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
@@ -66,12 +66,14 @@ export const useQuery = <Data = unknown>(
       dispatch({ type: 'loading' });
       const reponseData = await handlerRef.current();
       dispatch({ type: 'success', data: reponseData });
-    } catch {
+      options?.onSuccess?.(reponseData);
+    } catch (error) {
       dispatch({ type: 'error' });
+      options?.onError?.(error);
     } finally {
       dispatch({ type: 'finally' });
     }
-  }, []);
+  }, [options?.onSuccess, options?.onError]);
 
   const isMount = useRef(true);
   useEffect(() => {
