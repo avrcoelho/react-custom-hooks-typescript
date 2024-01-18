@@ -82,7 +82,7 @@ export const useQuery = <Data = unknown>(
       isMount.current = false;
       executeQuery();
     }
-  }, [options?.manualFetch, executeQuery]);
+  }, [options]);
 
   return {
     isLoading: state.isLoading,
