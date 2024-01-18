@@ -1,8 +1,8 @@
 import { useCallback, useLayoutEffect, useReducer, useRef } from 'react';
 
-type MutationFunction<TData, TVariables> = (
-  variables: TVariables,
-) => Promise<TData | undefined>;
+type MutationFunction<Data, Variables> = (
+  variables: Variables,
+) => Promise<Data | undefined>;
 
 type UseMutationResponse<TFunction> = {
   isError: boolean;
@@ -10,6 +10,11 @@ type UseMutationResponse<TFunction> = {
   isLoading: boolean;
   mutate: TFunction;
   reset(): void;
+};
+
+type UseMutationOptions<Data> = {
+  onSuccess?(data: Data | undefined): void;
+  onError?(error: unknown): void;
 };
 
 type ReducerAction = {
@@ -46,9 +51,10 @@ const reducer = (
   }
 };
 
-export const useMutation = <TData = unknown, TVariables = void>(
-  handler: MutationFunction<TData, TVariables>,
-): UseMutationResponse<MutationFunction<TData, TVariables>> => {
+export const useMutation = <Data = unknown, Variables = void>(
+  handler: MutationFunction<Data, Variables>,
+  options?: UseMutationOptions<Data>,
+): UseMutationResponse<MutationFunction<Data, Variables>> => {
   const handlerRef = useRef(handler);
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
@@ -57,20 +63,22 @@ export const useMutation = <TData = unknown, TVariables = void>(
   });
 
   const mutate = useCallback(
-    async (variables: TVariables): Promise<TData | undefined> => {
-      let responseData: TData | undefined;
+    async (variables: Variables): Promise<Data | undefined> => {
+      let responseData: Data | undefined;
       try {
         dispatch({ type: 'loading' });
         responseData = await handlerRef.current(variables);
         dispatch({ type: 'success' });
-      } catch {
+        options?.onSuccess?.(responseData);
+      } catch (error) {
         dispatch({ type: 'error' });
+        options?.onError?.(error);
       } finally {
         dispatch({ type: 'finally' });
       }
       return responseData;
     },
-    [],
+    [options],
   );
 
   const reset = useCallback(() => {
