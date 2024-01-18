@@ -6,8 +6,11 @@ import {
   useRef,
 } from 'react';
 
-type UseQueryOptions = {
+type UseQueryOptions<Data> = {
+  queryFn: QueryFuntion<Data>;
   manualFetch?: boolean;
+  onSuccess?(data: Data | undefined): void;
+  onError?(error: unknown): void;
 };
 
 type UseQueryResponse<Data> = {
@@ -48,9 +51,9 @@ const reducer = (
   }
 };
 
-export const useQuery = <FnData = unknown, Data = FnData>(
-  handler: QueryFuntion<FnData>,
-  options?: UseQueryOptions,
+export const useQuery = <Data = unknown>(
+  handler: QueryFuntion<Data>,
+  options: UseQueryOptions<Data>,
 ): UseQueryResponse<Data> => {
   const handlerRef = useRef(handler);
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
